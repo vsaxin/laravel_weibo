@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 /**
  * @method static create(array $array)
+ * @method static insert(array $toArray)
+ * @method static find(int $int)
+ * @method static paginate(int $int)
  */
 class User extends Authenticatable
 {
@@ -30,6 +34,18 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * 当注册新用户时，生成注册码
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->activation_token = Str::random(10);
+        });
+    }
 
     /**
      * The attributes that should be cast to native types.
